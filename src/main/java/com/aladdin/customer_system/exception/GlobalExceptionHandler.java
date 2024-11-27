@@ -10,39 +10,37 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import java.time.LocalDateTime;
 import java.util.*;
 
+
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    private List<String> errorsMessage(List<String> list, String newValue) {
+    private List<String> valueList(List<String> list, String newValue) {
         list.add(newValue);
         return list;
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ApiErrors> methodArgumentNotValidExceptionHandler(MethodArgumentNotValidException exception) {
+    public ResponseEntity<ApiErrors> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
+        Map<String, List<String>> errorMap = new HashMap<>();
 
-        Map<String, List<String>> errorsMap = new HashMap<>();
-
-        for (ObjectError objectError : exception.getBindingResult().getAllErrors()) {
-            if (objectError instanceof FieldError) {
-                String fieldError = ((FieldError) objectError).getField();
-                if (errorsMap.containsKey(fieldError)) {
-                    errorsMap.put(fieldError, errorsMessage(errorsMap.get(fieldError), objectError.getDefaultMessage()));
-                } else {
-                    errorsMap.put(fieldError, errorsMessage(new ArrayList<>(), objectError.getDefaultMessage()));
-                }
+        for (ObjectError objectError : exception.getAllErrors()) {
+            String errorField = ((FieldError) objectError).getField();
+            if (errorMap.containsKey(errorField)) {
+                errorMap.put(errorField, valueList(errorMap.get(errorField), objectError.getDefaultMessage()));
+            } else {
+                errorMap.put(errorField, valueList(new ArrayList<>(), objectError.getDefaultMessage()));
             }
         }
+        return ResponseEntity.badRequest().body(apiErrors(errorMap));
 
-        return ResponseEntity.badRequest().body(errors(errorsMap));
     }
 
-    private <T> ApiErrors<T> errors(T error) {
+
+    public <T> ApiErrors<T> apiErrors(T error) {
         ApiErrors<T> apiErrors = new ApiErrors<>();
         apiErrors.setId(UUID.randomUUID().toString());
         apiErrors.setDateTime(LocalDateTime.now());
         apiErrors.setError(error);
-
         return apiErrors;
     }
 }

@@ -24,11 +24,10 @@ public class DTOCustomerIU {
 
     @NotBlank(message = "Password cannot be blank")
     @Size(min = 4, max = 20, message = "Password must be between 4 and 20 characters")
-    @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=]).{8,20}$", message = "Password must contain at least one digit," +
-            " one lowercase, one uppercase letter, and one special character")
+    @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{4,20}$", message = "Password must contain at least one digit," +
+            " one lowercase, one uppercase letter ")
     private String password;
 
-    @Negative(message = "Age don't be negative!")
     @Min(value = 18, message = "Must be at least 18 years old. ")
     private int age;
 
