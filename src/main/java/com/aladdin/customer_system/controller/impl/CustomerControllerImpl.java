@@ -4,6 +4,7 @@ import com.aladdin.customer_system.controller.ICustomerController;
 import com.aladdin.customer_system.service.ICustomerService;
 import com.aladdin.customer_system.tdo.DTOCustomer;
 import com.aladdin.customer_system.tdo.DTOCustomerIU;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,7 +20,7 @@ public class CustomerControllerImpl implements ICustomerController {
 
     @PostMapping(path = "/add")
     @Override
-    public DTOCustomer addCustomers(@RequestBody DTOCustomerIU customerUI) {
+    public DTOCustomer addCustomers(@RequestBody @Valid  DTOCustomerIU customerUI) {
         return iCustomerService.addCustomers(customerUI);
     }
 

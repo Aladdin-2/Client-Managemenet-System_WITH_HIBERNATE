@@ -13,13 +13,14 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 
 @Service
-
 public class CustomerServiceImpl implements ICustomerService {
+
 
     @Autowired
     private CustomerRepository customerRepository;
     @Autowired
     private JdbcTemplate jdbcTemplate;
+
 
     @Override
     public DTOCustomer addCustomers(DTOCustomerIU dtoCustomerIU) {
@@ -128,26 +129,28 @@ public class CustomerServiceImpl implements ICustomerService {
         double averageRating = totalRating / customers.size();
 
         System.out.println("Highest rating -> " + highestRating);
-        System.out.println("Lowest rating -> " + lowestRating);
+        System.out.println("Lowest rating  -> " + lowestRating);
         System.out.println("Average rating -> " + averageRating);
     }
 
 
     @Override
     public void deleteCustomer(Integer id) {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Delete customer? (yes/no)");
+        boolean isConfirmed = getUserConfirmation("Delete customer? (yes/no)");
 
-        String response = scanner.nextLine().trim().toLowerCase(); // Cavabı oxumaq və formatlamaq
-
-        if ("yes".equals(response)) {
+        if (isConfirmed) {
             customerRepository.deleteById(id);
             System.out.println("Customer deleted successfully.");
-        } else if ("no".equals(response)) {
-            System.out.println("Customer deletion cancelled.");
         } else {
-            System.out.println("Invalid response. Please type 'yes' or 'no'.");
+            System.out.println("Customer deletion cancelled.");
         }
+    }
+
+    private boolean getUserConfirmation(String message) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println(message);
+        String response = scanner.nextLine().trim().toLowerCase();
+        return "yes".equals(response);
     }
 
     @Override
