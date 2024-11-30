@@ -7,9 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class DTOCustomer {
+public class DTOAdmin {
     private String firstName;
     private String lastName;
-    private double rating;
-    private DTOAdmin entrepreneur;
 }

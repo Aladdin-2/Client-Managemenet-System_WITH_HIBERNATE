@@ -34,5 +34,6 @@ public class Customer {
     @Column(name = "age", nullable = true)
     private int age;
 
-
+    @OneToOne
+    private Admin admin;
 }

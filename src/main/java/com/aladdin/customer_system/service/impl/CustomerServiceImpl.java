@@ -1,10 +1,12 @@
 package com.aladdin.customer_system.service.impl;
 
 import com.aladdin.customer_system.entity.Customer;
+import com.aladdin.customer_system.entity.Admin;
 import com.aladdin.customer_system.repository.CustomerRepository;
 import com.aladdin.customer_system.service.ICustomerService;
 import com.aladdin.customer_system.tdo.DTOCustomer;
 import com.aladdin.customer_system.tdo.DTOCustomerIU;
+import com.aladdin.customer_system.tdo.DTOAdmin;
 import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +32,29 @@ public class CustomerServiceImpl implements ICustomerService {
         Customer dbCustomer = customerRepository.save(customer);
         BeanUtils.copyProperties(dbCustomer, response);
         return response;
+    }
+
+
+    /**
+     * @OneToOne ile edirem ama hele tam yazilmayib
+     **/
+    @Override
+    public DTOCustomer getCustomerWithEntrepreneur(Integer id) {
+
+        DTOAdmin dtoAdmin = new DTOAdmin();
+        DTOCustomer dtoCustomer = new DTOCustomer();
+
+        Optional<Customer> customerOptional = customerRepository.findById(id);
+
+        Customer customer = customerOptional.get();
+        Admin admin = customerOptional.get().getAdmin();
+
+        BeanUtils.copyProperties(admin, dtoAdmin);
+        BeanUtils.copyProperties(customer, dtoCustomer);
+
+        dtoCustomer.setEntrepreneur(dtoAdmin);
+
+        return dtoCustomer;
     }
 
 
@@ -139,8 +164,7 @@ public class CustomerServiceImpl implements ICustomerService {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Delete customer? (yes/no)");
 
-        String response = scanner.nextLine().trim().toLowerCase(); // Cavabı oxumaq və formatlamaq
-
+        String response = scanner.nextLine().trim().toLowerCase();
         if ("yes".equals(response)) {
             customerRepository.deleteById(id);
             System.out.println("Customer deleted successfully.");

@@ -20,8 +20,14 @@ public class CustomerControllerImpl implements ICustomerController {
 
     @PostMapping(path = "/add")
     @Override
-    public DTOCustomer addCustomers(@RequestBody @Valid  DTOCustomerIU customerUI) {
+    public DTOCustomer addCustomers(@RequestBody @Valid DTOCustomerIU customerUI) {
         return iCustomerService.addCustomers(customerUI);
+    }
+
+    @Override
+    @GetMapping(path = "/withEntr/{id}")
+    public DTOCustomer getCustomerWithEntrepreneur(@PathVariable(name = "id") Integer id) {
+        return iCustomerService.getCustomerWithEntrepreneur(id);
     }
 
     @Override
@@ -38,8 +44,7 @@ public class CustomerControllerImpl implements ICustomerController {
 
     @Override
     @GetMapping(path = "/find-with-params")
-    public List<DTOCustomer> findCustomerByNameAndFirstName(@RequestParam(name = "firstName", required = false) String firstName,
-                                                            @RequestParam(name = "lastName", required = false) String lastName) {
+    public List<DTOCustomer> findCustomerByNameAndFirstName(@RequestParam(name = "firstName", required = false) String firstName, @RequestParam(name = "lastName", required = false) String lastName) {
         return iCustomerService.findCustomerByNameAndFirstName(firstName, lastName);
     }
 
@@ -68,7 +73,7 @@ public class CustomerControllerImpl implements ICustomerController {
     }
 
     @Override
-    @DeleteMapping(path = "/deleteAllDB")
+    @DeleteMapping(path = "/deleteAll")
     public void deleteAllCustomer() {
         iCustomerService.deleteAllCustomers();
     }

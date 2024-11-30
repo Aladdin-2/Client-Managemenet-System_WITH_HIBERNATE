@@ -10,6 +10,8 @@ public interface ICustomerService {
 
     DTOCustomer addCustomers(DTOCustomerIU dtoCustomerUI);
 
+    DTOCustomer getCustomerWithEntrepreneur(Integer id);
+
     List<DTOCustomer> getCustomers();
 
     DTOCustomer findCustomer(Integer id);

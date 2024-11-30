@@ -9,6 +9,8 @@ public interface ICustomerController {
 
     DTOCustomer addCustomers(DTOCustomerIU customerIU);
 
+    DTOCustomer getCustomerWithEntrepreneur(Integer id);
+
     List<DTOCustomer> getCustomers();
 
     DTOCustomer findCustomer(Integer id);

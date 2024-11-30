@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Objects;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -20,15 +22,33 @@ public class DTOCustomerIU {
     @Email(message = "Incorrect email!")
     private String email;
 
+    @PositiveOrZero(message = "Rating don't be negative!")
     private double rating;
 
     @NotBlank(message = "Password cannot be blank")
-    @Size(min = 4, max = 20, message = "Password must be between 4 and 20 characters")
-    @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{4,20}$", message = "Password must contain at least one digit," +
+    @Size(min = 6, max = 20, message = "Password must be between 6 and 20 characters")
+    @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{6,20}$", message = "Password must contain at least one digit," +
             " one lowercase, one uppercase letter ")
     private String password;
 
     @Min(value = 18, message = "Must be at least 18 years old. ")
     private int age;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DTOCustomerIU that = (DTOCustomerIU) o;
+        return Double.compare(rating, that.rating) == 0
+                && age == that.age
+                && Objects.equals(firstName, that.firstName)
+                && Objects.equals(lastName, that.lastName)
+                && Objects.equals(email, that.email)
+                && Objects.equals(password, that.password);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(firstName, lastName, email, rating, password, age);
+    }
 }
