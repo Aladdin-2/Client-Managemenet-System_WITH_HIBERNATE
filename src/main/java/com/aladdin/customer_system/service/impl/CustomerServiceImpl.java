@@ -1,12 +1,12 @@
 package com.aladdin.customer_system.service.impl;
 
-import com.aladdin.customer_system.entity.Customer;
 import com.aladdin.customer_system.entity.Admin;
+import com.aladdin.customer_system.entity.Customer;
 import com.aladdin.customer_system.repository.CustomerRepository;
 import com.aladdin.customer_system.service.ICustomerService;
+import com.aladdin.customer_system.tdo.DTOAdmin;
 import com.aladdin.customer_system.tdo.DTOCustomer;
 import com.aladdin.customer_system.tdo.DTOCustomerIU;
-import com.aladdin.customer_system.tdo.DTOAdmin;
 import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,15 +29,37 @@ public class CustomerServiceImpl implements ICustomerService {
         Customer customer = new Customer();
         DTOCustomer response = new DTOCustomer();
         BeanUtils.copyProperties(dtoCustomerIU, customer);
+        BeanUtils.copyProperties(dtoCustomerIU.getDtoAdminIU(), customer.getAdmin());
         Customer dbCustomer = customerRepository.save(customer);
         BeanUtils.copyProperties(dbCustomer, response);
         return response;
     }
 
 
-    /**
-     * @OneToOne ile edirem ama hele tam yazilmayib
-     **/
+   /* @Override
+    public DTOCustomer addCustomers(@Valid DTOCustomerIU dtoCustomerIU) {
+        Customer customer = new Customer();
+        Admin admin = new Admin();
+        DTOCustomer response = new DTOCustomer();
+
+        BeanUtils.copyProperties(dtoCustomerIU, customer);
+        BeanUtils.copyProperties(dtoCustomerIU.getDtoAdmin(), admin);
+
+        customer.setAdmin(admin);
+        admin.setCustomer(customer);
+
+        Customer dbCustomer = customerRepository.save(customer);
+
+        BeanUtils.copyProperties(dbCustomer, response);
+
+        DTOAdmin dtoAdmin = new DTOAdmin();
+        BeanUtils.copyProperties(dbCustomer.getAdmin(), dtoAdmin);
+        response.setAdmin(dtoAdmin);
+
+        return response;
+    }
+*/
+
     @Override
     public DTOCustomer getCustomerWithEntrepreneur(Integer id) {
 
@@ -52,7 +74,7 @@ public class CustomerServiceImpl implements ICustomerService {
         BeanUtils.copyProperties(admin, dtoAdmin);
         BeanUtils.copyProperties(customer, dtoCustomer);
 
-        dtoCustomer.setEntrepreneur(dtoAdmin);
+        dtoCustomer.setAdmin(dtoAdmin);
 
         return dtoCustomer;
     }

@@ -1,53 +1,68 @@
 package com.aladdin.customer_system.controller.impl;
 
 import com.aladdin.customer_system.controller.IAdminController;
+import com.aladdin.customer_system.service.IAdminService;
+import com.aladdin.customer_system.service.impl.AdminServiceImpl;
 import com.aladdin.customer_system.tdo.DTOAdmin;
 import com.aladdin.customer_system.tdo.DTOAdminIU;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@RestController
+@RequestMapping(path = "Aladdin/holding/admin")
 public class AdminControllerImpl implements IAdminController {
+
+    @Autowired
+    private IAdminService adminService;
+
     @Override
-    public DTOAdmin addAdmin(DTOAdminIU adminIU) {
-        return null;
+    @PostMapping(path = "/addAdmin")
+    public DTOAdmin addAdmin(@RequestBody DTOAdminIU adminIU) {
+
+        return adminService.addAdmin(adminIU);
     }
 
     @Override
+    @GetMapping(path = "/allAdmin")
     public List<DTOAdmin> getAdmin() {
-        return List.of();
+        return adminService.getAdmin();
     }
 
     @Override
-    public DTOAdmin findAdmin(Integer id) {
-        return null;
+    @GetMapping(path = "/find{id}")
+    public DTOAdmin findAdmin(@PathVariable(name = "id") Integer id) {
+        return adminService.findAdmin(id);
     }
 
     @Override
-    public List<DTOAdmin> findAdminByNameAndFirstName(String firstName, String lastName) {
-        return List.of();
+    @GetMapping(path = "/find-with=params")
+    public List<DTOAdmin> findAdminByNameAndFirstName(@RequestParam(value = "firstName") String firstName,
+                                                      @RequestParam(value = "lastName") String lastName) {
+        return adminService.findAdminByNameAndFirstName(firstName, lastName);
     }
 
     @Override
+    @GetMapping(path = "/sort-admin")
     public List<DTOAdmin> getSortAdmin() {
-        return List.of();
+        return adminService.getSortAdmin();
     }
 
     @Override
-    public DTOAdmin updateAdmin(Integer id, DTOAdminIU dtoAdminIU) {
-        return null;
+    @PutMapping(path = "/update/{id}")
+    public DTOAdmin updateAdmin(@PathVariable(name = "id") Integer id, @RequestBody DTOAdminIU dtoAdminIU) {
+        return adminService.updateAdmin(id, dtoAdminIU);
     }
 
     @Override
-    public void adminReportRating() {
+    @DeleteMapping(path = "/delete/{id}")
+    public void deleteAdmin(@PathVariable(name = "id") Integer id) {
 
     }
 
     @Override
-    public void deleteAdmin(Integer id) {
-
-    }
-
-    @Override
+    @DeleteMapping(path = "/delete-all")
     public void deleteAllAdmin() {
 
     }

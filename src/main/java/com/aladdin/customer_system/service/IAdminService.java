@@ -17,8 +17,6 @@ public interface IAdminService {
 
     DTOAdmin updateAdmin(Integer id, DTOAdminIU dtoAdminIU);
 
-    void adminReportRating();
-
     void deleteAdmin(Integer id);
 
     void deleteAllAdmin();

@@ -44,7 +44,8 @@ public class CustomerControllerImpl implements ICustomerController {
 
     @Override
     @GetMapping(path = "/find-with-params")
-    public List<DTOCustomer> findCustomerByNameAndFirstName(@RequestParam(name = "firstName", required = false) String firstName, @RequestParam(name = "lastName", required = false) String lastName) {
+    public List<DTOCustomer> findCustomerByNameAndFirstName(@RequestParam(name = "firstName", required = false) String firstName,
+                                                            @RequestParam(name = "lastName", required = false) String lastName) {
         return iCustomerService.findCustomerByNameAndFirstName(firstName, lastName);
     }
 

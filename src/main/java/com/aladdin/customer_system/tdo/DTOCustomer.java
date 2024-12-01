@@ -11,5 +11,5 @@ public class DTOCustomer {
     private String firstName;
     private String lastName;
     private double rating;
-    private DTOAdmin entrepreneur;
+    private DTOAdmin admin;
 }

@@ -34,6 +34,9 @@ public class DTOCustomerIU {
     @Min(value = 18, message = "Must be at least 18 years old. ")
     private int age;
 
+    private DTOAdminIU dtoAdminIU;
+
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

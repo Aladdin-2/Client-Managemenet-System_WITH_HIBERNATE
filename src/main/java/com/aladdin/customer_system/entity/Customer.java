@@ -34,6 +34,8 @@ public class Customer {
     @Column(name = "age", nullable = true)
     private int age;
 
-    @OneToOne
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "admin_id", referencedColumnName = "id")
     private Admin admin;
 }
