@@ -25,15 +25,15 @@ public class CustomerControllerImpl implements ICustomerController {
     }
 
     @Override
-    @GetMapping(path = "/withEntr/{id}")
-    public DTOCustomer getCustomerWithEntrepreneur(@PathVariable(name = "id") Integer id) {
-        return iCustomerService.getCustomerWithEntrepreneur(id);
-    }
-
-    @Override
     @GetMapping(path = "/all")
     public List<DTOCustomer> getCustomers() {
         return iCustomerService.getCustomers();
+    }
+
+    @Override
+    @GetMapping(path = "/all/customers-with-admin")
+    public List<DTOCustomer> getAllCustomerWithAdmin() {
+        return iCustomerService.getAllCustomerWithAdmin();
     }
 
     @Override
@@ -43,10 +43,23 @@ public class CustomerControllerImpl implements ICustomerController {
     }
 
     @Override
-    @GetMapping(path = "/find-with-params")
+    @GetMapping(path = "/find/with-admin/{id}")
+    public DTOCustomer findCustomerWithAdmin(@PathVariable(name = "id") Integer id) {
+        return iCustomerService.findCustomerWithAdmin(id);
+    }
+
+    @Override
+    @GetMapping(path = "/with-params")
     public List<DTOCustomer> findCustomerByNameAndFirstName(@RequestParam(name = "firstName", required = false) String firstName,
                                                             @RequestParam(name = "lastName", required = false) String lastName) {
         return iCustomerService.findCustomerByNameAndFirstName(firstName, lastName);
+    }
+
+    @Override
+    @GetMapping(path = "/with-params-withAdmin")
+    public List<DTOCustomer> findCustomerWithAdminByNameAndFirstName(@RequestParam(name = "firstName", required = false) String firstName,
+                                                                     @RequestParam(name = "lastName", required = false) String lastName) {
+        return iCustomerService.findCustomerWithAdminByNameAndFirstName(firstName, lastName);
     }
 
     @Override
@@ -59,6 +72,12 @@ public class CustomerControllerImpl implements ICustomerController {
     @PutMapping(path = "/update/{id}")
     public DTOCustomer updateCustomer(@PathVariable(name = "id") Integer id, @RequestBody DTOCustomerIU customer) {
         return iCustomerService.updateCustomer(id, customer);
+    }
+
+    @Override
+    @PutMapping(path = "/update-with-admin/{id}")
+    public DTOCustomer updateCustomerAndAdmin(@PathVariable(name = "id") Integer id, @RequestBody DTOCustomerIU dtoCustomerI) {
+        return iCustomerService.updateCustomerAndAdmin(id, dtoCustomerI);
     }
 
     @Override

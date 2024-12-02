@@ -26,55 +26,19 @@ public class CustomerServiceImpl implements ICustomerService {
 
     @Override
     public DTOCustomer addCustomers(@Valid DTOCustomerIU dtoCustomerIU) {
-        Customer customer = new Customer();
-        DTOCustomer response = new DTOCustomer();
-        BeanUtils.copyProperties(dtoCustomerIU, customer);
-        BeanUtils.copyProperties(dtoCustomerIU.getDtoAdminIU(), customer.getAdmin());
-        Customer dbCustomer = customerRepository.save(customer);
-        BeanUtils.copyProperties(dbCustomer, response);
-        return response;
-    }
-
-
-   /* @Override
-    public DTOCustomer addCustomers(@Valid DTOCustomerIU dtoCustomerIU) {
-        Customer customer = new Customer();
-        Admin admin = new Admin();
-        DTOCustomer response = new DTOCustomer();
-
-        BeanUtils.copyProperties(dtoCustomerIU, customer);
-        BeanUtils.copyProperties(dtoCustomerIU.getDtoAdmin(), admin);
-
-        customer.setAdmin(admin);
-        admin.setCustomer(customer);
-
-        Customer dbCustomer = customerRepository.save(customer);
-
-        BeanUtils.copyProperties(dbCustomer, response);
-
-        DTOAdmin dtoAdmin = new DTOAdmin();
-        BeanUtils.copyProperties(dbCustomer.getAdmin(), dtoAdmin);
-        response.setAdmin(dtoAdmin);
-
-        return response;
-    }
-*/
-
-    @Override
-    public DTOCustomer getCustomerWithEntrepreneur(Integer id) {
-
-        DTOAdmin dtoAdmin = new DTOAdmin();
         DTOCustomer dtoCustomer = new DTOCustomer();
+        Customer customer = new Customer();
+        DTOAdmin dtoAdmin = new DTOAdmin();
+        Admin admin = new Admin();
 
-        Optional<Customer> customerOptional = customerRepository.findById(id);
-
-        Customer customer = customerOptional.get();
-        Admin admin = customerOptional.get().getAdmin();
-
-        BeanUtils.copyProperties(admin, dtoAdmin);
-        BeanUtils.copyProperties(customer, dtoCustomer);
+        BeanUtils.copyProperties(dtoCustomerIU, dtoCustomer);
+        BeanUtils.copyProperties(dtoCustomerIU, customer);
+        BeanUtils.copyProperties(dtoCustomerIU.getDtoAdminIU(), dtoAdmin);
+        BeanUtils.copyProperties(dtoCustomerIU.getDtoAdminIU(), admin);
 
         dtoCustomer.setAdmin(dtoAdmin);
+        customer.setAdmin(admin);
+        customerRepository.save(customer);
 
         return dtoCustomer;
     }
@@ -92,11 +56,47 @@ public class CustomerServiceImpl implements ICustomerService {
     }
 
     @Override
+    public List<DTOCustomer> getAllCustomerWithAdmin() {
+        List<DTOCustomer> dtoCustomers = new ArrayList<>();
+        List<Customer> customers = customerRepository.findAll();
+        if (!customerRepository.findAll().isEmpty()) {
+            for (Customer customer : customers) {
+
+                DTOCustomer dtoCustomer = new DTOCustomer();
+                DTOAdmin dtoAdmin = new DTOAdmin();
+
+                BeanUtils.copyProperties(customer, dtoCustomer);
+                BeanUtils.copyProperties(customer.getAdmin(), dtoAdmin);
+                dtoCustomer.setAdmin(dtoAdmin);
+                dtoCustomers.add(dtoCustomer);
+            }
+            return dtoCustomers;
+        }
+        return null;
+    }
+
+
+    @Override
     public DTOCustomer findCustomer(Integer id) {
         Optional<Customer> findCustomer = customerRepository.findById(id);
         if (findCustomer.isPresent()) {
             DTOCustomer dtoCustomer = new DTOCustomer();
             BeanUtils.copyProperties(findCustomer.get(), dtoCustomer);
+            return dtoCustomer;
+        }
+        return null;
+    }
+
+    @Override
+    public DTOCustomer findCustomerWithAdmin(Integer id) {
+        Optional<Customer> findCustomer = customerRepository.findById(id);
+        if (findCustomer.isPresent()) {
+            DTOCustomer dtoCustomer = new DTOCustomer();
+            DTOAdmin dtoAdmin = new DTOAdmin();
+
+            BeanUtils.copyProperties(findCustomer.get(), dtoCustomer);
+            BeanUtils.copyProperties(findCustomer.get().getAdmin(), dtoAdmin);
+            dtoCustomer.setAdmin(dtoAdmin);
             return dtoCustomer;
         }
         return null;
@@ -122,6 +122,25 @@ public class CustomerServiceImpl implements ICustomerService {
         return findingCustomer;
     }
 
+    @Override
+    public List<DTOCustomer> findCustomerWithAdminByNameAndFirstName(String firstName, String lastName) {
+        List<DTOCustomer> allCustomers = getAllCustomerWithAdmin();
+
+        if (allCustomers.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        List<DTOCustomer> filteredCustomers = new ArrayList<>();
+        for (DTOCustomer dtoCustomer : allCustomers) {
+            boolean matchFirstName = firstName != null && !firstName.isBlank() && dtoCustomer.getFirstName().equalsIgnoreCase(firstName);
+            boolean matchLastName = lastName != null && !lastName.isBlank() && dtoCustomer.getLastName().equalsIgnoreCase(lastName);
+
+            if ((matchFirstName && matchLastName) || (matchFirstName && lastName == null) || (matchLastName && firstName == null)) {
+                filteredCustomers.add(dtoCustomer);
+            }
+        }
+        return filteredCustomers.isEmpty() ? Collections.emptyList() : filteredCustomers;
+    }
 
     @Override
     public List<DTOCustomer> getSortCustomers() {
@@ -144,6 +163,29 @@ public class CustomerServiceImpl implements ICustomerService {
             BeanUtils.copyProperties(dbCustomer, dtoCustomer);
             return dtoCustomer;
         }
+        return null;
+    }
+
+    @Override
+    public DTOCustomer updateCustomerAndAdmin(Integer id, DTOCustomerIU dtoCustomerI) {
+        Optional<Customer> optional = customerRepository.findById(id);
+        if (optional.isPresent()) {
+            Customer customer = optional.get();
+            Admin admin = optional.get().getAdmin();
+            BeanUtils.copyProperties(dtoCustomerI, customer);
+            BeanUtils.copyProperties(dtoCustomerI.getDtoAdminIU(), admin);
+            customer.setAdmin(admin);
+            Customer updateCustomer = customerRepository.save(customer);
+
+            DTOCustomer dtoCustomer = new DTOCustomer();
+            DTOAdmin dtoAdmin = new DTOAdmin();
+            BeanUtils.copyProperties(updateCustomer, dtoCustomer);
+            BeanUtils.copyProperties(updateCustomer.getAdmin(), dtoAdmin);
+            dtoCustomer.setAdmin(dtoAdmin);
+
+            return dtoCustomer;
+        }
+
         return null;
     }
 
@@ -198,9 +240,26 @@ public class CustomerServiceImpl implements ICustomerService {
     }
 
     @Override
+    public void deleteCustomerWithAdmin(Integer id) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Delete customer? (yes/no)");
+
+        String response = scanner.nextLine().trim().toLowerCase();
+        if ("yes".equals(response)) {
+            customerRepository.deleteById(id);
+            System.out.println("Customer deleted successfully.");
+        } else if ("no".equals(response)) {
+            System.out.println("Customer deletion cancelled.");
+        } else {
+            System.out.println("Invalid response. Please type 'yes' or 'no'.");
+        }
+    }
+
+    @Override
     public void deleteAllCustomers() {
         customerRepository.deleteAll();
         jdbcTemplate.execute("ALTER TABLE customer AUTO_INCREMENT = 1");
+        jdbcTemplate.execute("ALTER TABLE admin AUTO_INCREMENT = 1");
     }
 }
 
